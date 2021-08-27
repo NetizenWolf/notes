@@ -1,0 +1,62 @@
+/etc/hostname
+/etc/hosts
+hostnamectl
+
+apt update && apt -y upgrade
+apt -y install build-essential vim dirmngr gnupg apt-transport-https software-properties-common ca-certificates curl
+curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
+echo 'deb https://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main' | tee /etc/apt/sources.list.d/mongodb-org.list
+apt update && apt -y upgrade
+apt install -y mongodb-org
+
+systemctl enable mongod.service
+systemctl start mongod.service
+systemctl status mongod.service
+
+
+cp /etc/mongod.conf /etc/mongod.conf.backup
+
+sed -i 's/bindIp: 127.0.0.1/bindIp: ::,0.0.0.0/' /etc/mongod.conf
+sed -i 's/#replication:/replication:\n \ replSetName: "Cluster"/' /etc/mongod.conf
+
+systemctl restart mongod
+
+
+rs.remove("13.73.144.190:27017"
+
+rs.add("172.16.37.131:27017")
+
+# Inicializar Cluster
+    rs.initiate()
+# Ver configuracion del Cluster
+    rs.conf()
+
+# Ver estado del cluster 
+    rs.status()
+
+# Ver datos del nodo
+  rs.hello()
+
+# Quitar servidor Primario y elegir otro
+  rs.stepDown
+
+# Prioridad en los servidores (por defecto es 1, para elegir a un servidor como principa poner 2 o mas)
+    rs.config.members[1].priority=2 # Ejemplo nodo 1 cambia prioridad a 2
+    rs.reconfig(conf) #  aplicar cambio
+
+    rs.config.members[1].host="DBMaster:27017" 
+    rs.config.members[1].host="DBSlaveA:27017" 
+    rs.config.members[1].host="DBSlaveB:27017" 
+
+
+
+
+mongo
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 0, host: "mongodb-01:27017" },
+      { _id: 1, host: "mongodb-02:27017" },
+      { _id: 2, host: "mongodb-03:27017" }
+   ]
+})
