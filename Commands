@@ -1,3 +1,6 @@
+CONFIGURACION DE REPLICACION EN MONGODB
+***************************************************
+
 /etc/hostname
 /etc/hosts
 hostnamectl
