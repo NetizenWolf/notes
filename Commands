@@ -4,7 +4,7 @@ CONFIGURACION DE REPLICACION EN MONGODB
 /etc/hostname
 /etc/hosts
 hostnamectl
-
+sdfsfsf
 apt update && apt -y upgrade
 apt -y install build-essential vim dirmngr gnupg apt-transport-https software-properties-common ca-certificates curl
 curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
