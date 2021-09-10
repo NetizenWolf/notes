@@ -1,10 +1,7 @@
-CONFIGURACION DE REPLICACION EN MONGODB
-***************************************************
-asdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddasddsadasdsada asd sad sa
 /etc/hostname
 /etc/hosts
 hostnamectl
-sdfsfsf
+
 apt update && apt -y upgrade
 apt -y install build-essential vim dirmngr gnupg apt-transport-https software-properties-common ca-certificates curl
 curl -fsSL https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
@@ -34,11 +31,47 @@ rs.add("172.16.37.131:27017")
 # Ver configuracion del Cluster
     rs.conf()
 
+# agregar a demonio
+
+    systemctl enable mongod.service # para que se ejecute automaticamente al iniciar el servidor
+
 # Ver estado del cluster 
     rs.status()
 
 # Ver datos del nodo
   rs.hello()
+
+
+# Ejecutar comandos desde fuera de la consola de MongoDB ( mongo --eval )
+
+    mongo --eval 'db.runCommand({ connectionStatus: 1 })'
+
+# Comandos Basicos de Show MongoDB
+
+    show dbs
+    use nombredb
+    show collections
+    help
+    db.help()
+
+    db.getLastError() # Ver errores en las consultas de la base de datos
+
+    primaryDB.isMaster() or db.runCommand("ismaster") # verificar el master
+
+# Importar una base de Datos
+    mongoimport
+    ./mongoimport --host localhost --port 27666 --db test --collection people --file data.json --jsonArray
+
+
+
+# Saca Backup de Base de Datos
+    mongodump --host="10.10.10.59" --port=27017
+
+
+
+db.getReplicationInfo()
+
+/usr/bin/mongod --config /etc/mongod.conf
 
 # Quitar servidor Primario y elegir otro
   rs.stepDown
@@ -54,6 +87,7 @@ rs.add("172.16.37.131:27017")
 
 
 
+
 mongo
 rs.initiate( {
    _id : "rs0",
@@ -63,3 +97,40 @@ rs.initiate( {
       { _id: 2, host: "mongodb-03:27017" }
    ]
 })
+
+
+
+
+***************************************************************************************
+A: ****ERROR PRESENTADO
+
+    replicaBPM:SECONDARY> show dbs
+    2021-08-30T08:47:35.055-0400 E QUERY    [js] Error: listDatabases failed:{
+            "operationTime" : Timestamp(1630327645, 1),
+            "ok" : 0,
+            "errmsg" : "not master and slaveOk=false",
+            "code" : 13435,
+            "codeName" : "NotMasterNoSlaveOk",
+            "$gleStats" : {
+                    "lastOpTime" : Timestamp(0, 0),
+                    "electionId" : ObjectId("000000000000000000000000")
+            },
+            "lastCommittedOpTime" : Timestamp(1630327645, 1),
+            "$clusterTime" : {
+                    "clusterTime" : Timestamp(1630327645, 1),
+                    "signature" : {
+                            "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                            "keyId" : NumberLong(0)
+                    }
+            }
+    } :
+    _getErrorWithCode@src/mongo/shell/utils.js:25:13
+    Mongo.prototype.getDBs@src/mongo/shell/mongo.js:139:1
+    shellHelper.show@src/mongo/shell/utils.js:882:13
+    shellHelper@src/mongo/shell/utils.js:766:15
+    @(shellhelp2):1:1
+
+   *****SOLUCION
+        
+    rs.slaveOk() -> deprecate
+    rs.secondaryOk()
